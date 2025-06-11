@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const { seedUsers } = require('../database/seedUsers');
 const { dbConection } = require('../database/config.db');
 const response = require('../helpers/response.js');
 
@@ -19,7 +19,13 @@ class Server {
         };
 
         //Connet Database
-        this.connectDB();
+        this.connectDB().then(() => {
+            //Initialize data
+            this.initializeData();
+        }).catch((err) => {
+            console.error('Error connecting to the database:', err.message);
+        });
+
 
         //Middleware
         this.middleware();
@@ -33,6 +39,16 @@ class Server {
             await dbConection();
         } catch (err) {
             console.log(err.message);
+        }
+    }
+
+
+    async initializeData() {
+        try {
+            await seedUsers();
+            console.log('Datos inicializados correctamente');
+        } catch (err) {
+            console.log('Error al inicializar datos:', err.message);
         }
     }
 
