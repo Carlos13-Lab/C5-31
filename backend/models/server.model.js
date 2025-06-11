@@ -19,7 +19,12 @@ class Server {
         };
 
         //Connet Database
-        this.connectDB();
+        this.connectDB().then(() => {
+            //Initialize data
+            this.initializeData();
+        }).catch((err) => {
+            console.error('Error connecting to the database:', err.message);
+        });
 
 
         //Middleware
